@@ -69,6 +69,14 @@ class Databases:
         self.traktastic_cursor.execute(query)
         self.traktastic_connection.commit()
 
+        query = '''CREATE TABLE IF NOT EXISTS "main"."mapping" (
+                        "plex_id"	INTEGER,
+                        "type"	TEXT,
+                        "library_id"	INTEGER
+                    );'''
+        self.traktastic_cursor.execute(query)
+        self.traktastic_connection.commit()
+
     def set_traktastic_user_active(self, id):
         query = '''UPDATE "main"."accounts" SET "active" = 1 WHERE "plex_id" = ?'''
         self.traktastic_cursor.execute(query, (id,))
@@ -191,6 +199,12 @@ class Databases:
         tv = self.traktastic_cursor.fetchall()
         return tv
 
+    def get_traktastic_mapped_library_id(self, plex_id, type):
+        query = '''SELECT "library_id" FROM "main"."mapping" WHERE "plex_id" = ? AND "type" = ?;'''
+        self.traktastic_cursor.execute(query, (plex_id, type,))
+        library_id = self.traktastic_cursor.fetchone()
+        return library_id
+
     def create_traktastic_user(self, account):
         print(' > Creating new link for Traktastic acccount: %s..' % account['plex_username'])
         query = '''INSERT INTO "main"."accounts"(
@@ -250,6 +264,17 @@ class Databases:
             ))
             self.traktastic_connection.commit()
 
+    def update_traktastic_users_plex_library_id(self, plex_id, type, library_id):
+        query = '''INSERT INTO "main"."mapping"(
+                            "plex_id", "type", "library_id"
+                        ) VALUES (
+                            ?,?,?
+                        );'''
+
+        self.traktastic_cursor.execute(query, (
+           int(plex_id), type, int(library_id)))
+        self.traktastic_connection.commit()
+
     def verify_plex_user_existance(self, plex_username):
         query = 'SELECT id,name FROM accounts WHERE name = ?'
         self.plex_cursor.execute(query, (plex_username,))
@@ -265,6 +290,16 @@ class Databases:
             else:
                 print(' > An Error has occourd.')
                 return False
+
+    def verify_traktastic_user_library_mapping(self, plex_id, type):
+        query = '''SELECT * FROM "main"."mapping" WHERE "plex_id" = ? AND "type" = ?'''
+        self.traktastic_cursor.execute(query, (plex_id, type,))
+        libs = self.traktastic_cursor.fetchall()
+
+        if len(libs) > 0:
+            return True
+        else:
+            return False
 
     def verify_tractastic_user_existance(self, plex_username):
         query = 'SELECT "plex_id", "plex_username" FROM "main"."accounts" WHERE "plex_username" = ?'
@@ -295,4 +330,9 @@ class Databases:
     def delete_traktastic_user(self, plex_id):
         query = 'DELETE FROM "main"."accounts" WHERE "plex_id"=?'
         self.traktastic_cursor.execute(query, (int(plex_id),))
+        self.traktastic_connection.commit()
+
+    def delete_traktastic_mapped_library_id(self, library_id):
+        query = '''DELETE FROM "main"."mapping" WHERE "library_id" = ?;'''
+        self.traktastic_cursor.execute(query, (int(library_id),))
         self.traktastic_connection.commit()

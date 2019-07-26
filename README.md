@@ -8,10 +8,10 @@ Features of Traktastic:
 - Receive recommendations for individual or all users (TV series and movies)
 - Configure filters for the desired recommendations, while TV series or films that do not meet the criteria are automatically dismissed and new ones are loaded
 - Based on the recommendations, create new Plex Libraries for the respective users, whereby existing content is linked to a user-specific directory by means of symlinking in order to save space
+- Create and share the libraries directly on your Plex Server and share them with the corresponding user automatically
 
 In development:
 - Cronjob Administration
-- PlexAPI to auto-assign libraries to a user
 - Sonarr/Radarr API
 
 
@@ -54,6 +54,15 @@ trakt:
   movie_year_before_blacklist: 1990
   movie_max_related_movies: 5
 
+plex:
+  username: <YOUR_PLEX_USERNAME>
+  password: <YOUR_PLEX_PASSWORD>
+  server: <YOUR_PLEX_MEDIA_SERVER_ID>
+  library_name_movie: 'Movie Recommendations'
+  library_name_tv: 'TV-Show Recommendations'
+  library_language: 'en'
+  auto_library: False
+
 filesystem:
   libraries_base_path: './libraries/'
 
@@ -62,7 +71,7 @@ databases:
   plex_database_path: '/path/to/plex/database.db'
 ```
 
-Now you are ready to go!
+> NOTE: If you want to auto-generate Plex Libraries for users, you need to set the ``auto_library`` flag to ```True``` and enter your Plex Server credentials (```username```, ```password```) and your server id (```server```)! The library command section will now push the libraries to your Plex server and shares them with the correct user only!
 
 ### Installing
 
@@ -114,10 +123,10 @@ Commands:
   recommendations <PlexUsername> tv         Recieve a list of tv-show recommendations for a specific user (updates the Traktastic cached information)
   recommendations <PlexUsername> movies     Recieve a list of movie recommendations for a specific user (updates the Traktastic cached information)
 
-  library all                               Creates custom user libraries based on the recommendations (tv-show/movies) for all users (symlinking)
-  library <PlexUsername> tv                 Creates custom user tv-show library based on the recommendations for a specifc user (symlinking)
-  library <PlexUsername> movies             Creates custom user movie library based on the recommendations for a specifc user (symlinking)
-  library <PlexUsername> delete             Destroys all libraries for a specific users (unlinking, deletion of folder)
+  library all                               Creates custom user libraries based on the recommendations (tv-show/movies) for all users (symlinking) and share on Plex
+  library <PlexUsername> tv                 Creates custom user tv-show library based on the recommendations for a specifc user (symlinking) and share on Plex
+  library <PlexUsername> movies             Creates custom user movie library based on the recommendations for a specifc user (symlinking) and share on Plex
+  library <PlexUsername> delete             Destroys all libraries for a specific users (unlinking, deletion of folder) and deletes them on Plex
 
 Arguments:
   <PlexUsername>        Username which is shown by 'traktastic.py accounts list plex'

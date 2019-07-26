@@ -1,4 +1,5 @@
 from modules.trakthelper import Trakthelper
+from modules.plexhelper import Plexhelper
 from termcolor import colored
 import trakt
 import trakt.tv
@@ -30,6 +31,7 @@ class Account:
         self.libraries_user_path = os.path.join(self.libraries_base_path, self.plex_username)
         self.libraries_user_tv_path = os.path.join(self.libraries_user_path, 'tv')
         self.libraries_user_movie_path = os.path.join(self.libraries_user_path, 'movies')
+        self.auto_plex_library = config['plex']['auto_library']
 
     def fetch_account_data(self, plex_username):
         query = '''SELECT * FROM "main"."accounts" WHERE "plex_username"=?'''
@@ -290,6 +292,12 @@ class Account:
             (head, tail) = os.path.split(movie[5])
             os.symlink(movie[5], os.path.join(self.libraries_user_movie_path, tail))
 
+        if self.auto_plex_library == True:
+            absolut_library_path = os.path.abspath(self.libraries_user_movie_path)
+
+            plex_server = Plexhelper(self.databases)
+            plex_server.create_library_for_specific_user(self, absolut_library_path, 'movie')
+
         return True
 
     def create_user_tv_recommendations_library(self):
@@ -306,6 +314,12 @@ class Account:
         for tv in existing_tv:
             (head, tail) = os.path.split(tv[5])
             os.symlink(tv[5], os.path.join(self.libraries_user_tv_path, tail))
+
+        if self.auto_plex_library == True:
+            absolut_library_path = os.path.abspath(self.libraries_user_tv_path)
+
+            plex_server = Plexhelper(self.databases)
+            plex_server.create_library_for_specific_user(self, absolut_library_path, 'show')
 
         return True
 
@@ -326,20 +340,19 @@ class Account:
             "shows": shows
         }
 
-        print(values)
-
         self.trakthelper.delete_hidden_recommendations(values)
 
     def delete_user_recommendation_libraries(self):
 
-        if not os.path.exists(self.libraries_user_tv_path):
-            print(colored('\n > No tv-show library found..', 'yellow'))
-        else:
+        if self.auto_plex_library == True:
+            plex_server = Plexhelper(self.databases)
+            plex_server.delete_library_for_specific_user(self, 'show')
+            plex_server.delete_library_for_specific_user(self, 'movie')
+
+        if os.path.exists(self.libraries_user_tv_path):
             self.unlink_library_symlinks(self.libraries_user_tv_path)
 
-        if not os.path.exists(self.libraries_user_movie_path):
-            print(colored(' > No movie library found..', 'yellow'))
-        else:
+        if os.path.exists(self.libraries_user_movie_path):
             self.unlink_library_symlinks(self.libraries_user_movie_path)
 
         shutil.rmtree(self.libraries_user_path, ignore_errors=True)

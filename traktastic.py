@@ -38,10 +38,10 @@ Commands:
   recommendations <PlexUsername> tv         Recieve a list of tv-show recommendations for a specific user (updates the Traktastic cached information)
   recommendations <PlexUsername> movies     Recieve a list of movie recommendations for a specific user (updates the Traktastic cached information)
 
-  library all                               Creates custom user libraries based on the recommendations (tv-show/movies) for all users (symlinking)
-  library <PlexUsername> tv                 Creates custom user tv-show library based on the recommendations for a specifc user (symlinking)
-  library <PlexUsername> movies             Creates custom user movie library based on the recommendations for a specifc user (symlinking)
-  library <PlexUsername> delete             Destroys all libraries for a specific users (unlinking, deletion of folder)
+  library all                               Creates custom user libraries based on the recommendations (tv-show/movies) for all users (symlinking) and share on Plex
+  library <PlexUsername> tv                 Creates custom user tv-show library based on the recommendations for a specifc user (symlinking) and share on Plex
+  library <PlexUsername> movies             Creates custom user movie library based on the recommendations for a specifc user (symlinking) and share on Plex
+  library <PlexUsername> delete             Destroys all libraries for a specific users (unlinking, deletion of folder) and deletes them on Plex
 
 Arguments:
   <PlexUsername>        Username which is shown by 'traktastic.py accounts list plex'

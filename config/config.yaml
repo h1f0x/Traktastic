@@ -9,6 +9,15 @@ trakt:
   movie_year_before_blacklist: 1990
   movie_max_related_movies: 5
 
+plex:
+  username: <YOUR_PLEX_USERNAME>
+  password: <YOUR_PLEX_PASSWORD>
+  server: <YOUR_PLEX_MEDIA_SERVER_ID>
+  library_name_movie: 'Movie Recommendations'
+  library_name_tv: 'TV-Show Recommendations'
+  library_language: 'en'
+  auto_library: False
+
 filesystem:
   libraries_base_path: './libraries/'
 
