@@ -24,6 +24,7 @@ class Account:
         self.tv_genre_blacklist = config['trakt']['tv_genre_blacklist']
         self.tv_year_before_blacklist = config['trakt']['tv_year_before_blacklist']
         self.tv_max_related_shows = config['trakt']['tv_max_related_shows']
+        self.tv_seen_threshold = config['trakt']['tv_seen_threshold']
         self.movie_genre_blacklist = config['trakt']['movie_genre_blacklist']
         self.movie_year_before_blacklist = config['trakt']['movie_year_before_blacklist']
         self.movie_max_related_movies = config['trakt']['movie_max_related_movies']
@@ -151,7 +152,7 @@ class Account:
                         progess = self.trakthelper.get_tv_show_progress(str(rel.ids['ids']['trakt']))
                         percentage = (progess['aired'] / 100) * progess['completed']
 
-                        if percentage <= 25:
+                        if percentage <= int(self.tv_seen_threshold):
                             filtered_related.add(rel)
 
                     tv_max_related_shows = 0

@@ -1,5 +1,4 @@
 from termcolor import colored
-from pprint import pprint
 import plexapi
 import plexapi.myplex
 import plexapi.server
@@ -73,7 +72,12 @@ class Plexhelper:
                 self.databases.update_traktastic_users_plex_library_id(account.plex_id, type, section.key)
 
                 try:
-                    section.edit(agent=section.agent, name=self.library_name_movie)
+                    if library_type == 'movie':
+                        section.edit(agent=section.agent, name=self.library_name_movie)
+                    elif library_type == 'show':
+                        section.edit(agent=section.agent, name=self.library_name_tv)
+                    else:
+                        exit(0)
                 except:
                     time.sleep(10)
 
@@ -81,9 +85,13 @@ class Plexhelper:
                 sections_to_share = []
                 sections_to_share.append(section.key)
 
-                for section in user.servers[0].sections():
-                    if section.shared ==  True:
-                        sections_to_share.append(section.sectionKey)
+                for server in user.servers:
+                    if server.name == self.plex_server_id:
+                        sections = server.sections()
+
+                        for section in sections:
+                           if section.shared ==  True:
+                               sections_to_share.append(section.sectionKey)
 
                 self.plex_account.updateFriend(account.plex_username, self.plex_server, sections=sections_to_share)
 

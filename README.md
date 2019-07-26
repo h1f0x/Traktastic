@@ -50,6 +50,7 @@ trakt:
   tv_genre_blacklist: ['animation', 'anime', 'children']
   tv_year_before_blacklist: 1998
   tv_max_related_shows: 3
+  tv_seen_threshold: 25
   movie_genre_blacklist: ['animation', 'anime', 'children']
   movie_year_before_blacklist: 1990
   movie_max_related_movies: 5
