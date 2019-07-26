@@ -70,13 +70,13 @@ class Databases:
         self.traktastic_connection.commit()
 
     def set_traktastic_user_active(self, id):
-        query = '''UPDATE "main"."accounts" SET "active" = 1'''
-        self.traktastic_cursor.execute(query)
+        query = '''UPDATE "main"."accounts" SET "active" = 1 WHERE "plex_id" = ?'''
+        self.traktastic_cursor.execute(query, (id,))
         self.traktastic_connection.commit()
 
     def set_traktastic_user_inactive(self, id):
-        query = '''UPDATE "main"."accounts" SET "active" = 0'''
-        self.traktastic_cursor.execute(query)
+        query = '''UPDATE "main"."accounts" SET "active" = 0 WHERE "plex_id" = ?'''
+        self.traktastic_cursor.execute(query, (id,))
         self.traktastic_connection.commit()
 
     def get_plex_user_id(self, plex_username):
