@@ -21,7 +21,7 @@ In order for the framework to work properly, a few things need to be configured 
 
 ### Prerequisites
 
-Tested with Python: >= 3.7.1
+Tested with Python: >= 3.6.4
 
 #### Trakt.tv API Key
 

@@ -120,7 +120,7 @@ def accounts():
 
                 account.set_active()
 
-                spinner.text = "Account activated. Please regenerate cronjobs with 'traktastic.py jobs enable'"
+                spinner.text = "Account activated."
                 spinner.ok("✔")
 
             if arguments['inactive']:
@@ -129,7 +129,7 @@ def accounts():
 
                 account.set_inactive()
 
-                spinner.text = "Account deactivated. Please regenerate cronjobs with 'traktastic.py jobs enable'"
+                spinner.text = "Account deactivated."
                 spinner.ok("✔")
 
 
