@@ -1,0 +1,17 @@
+trakt:
+  application: 'Traktastic'
+  client_id: <YOUR_CLIENT_ID>
+  client_secret: <YOUR_CLIENT_SECRET>
+  tv_genre_blacklist: ['animation', 'anime', 'children']
+  tv_year_before_blacklist: 1998
+  tv_max_related_shows: 3
+  movie_genre_blacklist: ['animation', 'anime', 'children']
+  movie_year_before_blacklist: 1990
+  movie_max_related_movies: 5
+
+filesystem:
+  libraries_base_path: './libraries/'
+
+databases:
+  traktastic_database_path: './databases/traktastic.db'
+  plex_database_path: '/path/to/plex/database.db'
