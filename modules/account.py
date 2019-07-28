@@ -171,8 +171,11 @@ class Account:
                         if genre == blacklist_genre:
                             to_be_removed.add(rec)
                             genre_status = False
-
-                if show['year'] < self.tv_year_before_blacklist:
+                try:
+                    if show['year'] < self.tv_year_before_blacklist:
+                        to_be_removed.add(rec)
+                        year_status = False
+                except:
                     to_be_removed.add(rec)
                     year_status = False
 
@@ -243,8 +246,11 @@ class Account:
                         if genre == blacklist_genre:
                             to_be_removed.add(rec)
                             genre_status = False
-
-                if movie['year'] < self.movie_year_before_blacklist:
+                try:
+                    if movie['year'] < self.movie_year_before_blacklist:
+                        to_be_removed.add(rec)
+                        year_status = False
+                except:
                     to_be_removed.add(rec)
                     year_status = False
 
