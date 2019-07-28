@@ -212,6 +212,12 @@ class Account:
         first_run = False
         overwall_recommendations = list()
 
+        watched_movies = self.trakthelper.get_watched_movies(self.trakt_username)
+        watched_movies_ids = []
+
+        for watched_movie in watched_movies:
+            watched_movies_ids.append(watched_movie['movie']['ids']['trakt'])
+
         while running == True:
             genre_status = True
             year_status = True
@@ -223,7 +229,8 @@ class Account:
                     related = movie.related
                     movie_max_related_movies = 0
                     while movie_max_related_movies <= self.movie_max_related_movies-1:
-                        related_movies.append(related[movie_max_related_movies])
+                        if related[movie_max_related_movies].ids['ids']['trakt'] not in watched_movies_ids:
+                            related_movies.append(related[movie_max_related_movies])
                         movie_max_related_movies += 1
 
                 overwall_recommendations = overwall_recommendations + related_movies

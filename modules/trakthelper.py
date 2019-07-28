@@ -80,6 +80,17 @@ class Trakthelper:
         data = requests.get(url, headers=headers).json()
         return data
 
+    def get_watched_movies(self, user_id):
+        headers = {
+            'Content-Type': self.content_type,
+            'trakt-api-version': self.trakt_api_version,
+            'trakt-api-key': self.trakt_cliend_id
+        }
+
+        url = 'https://api.trakt.tv/users/' + user_id + '/watched/movies'
+        data = requests.get(url, headers=headers).json()
+        return data
+
     def update_watched_tv_shows(self, shows):
         headers = {
             'Content-Type': self.content_type,
