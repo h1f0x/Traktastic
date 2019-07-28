@@ -47,9 +47,11 @@ class Plexhelper:
             if library_type == 'movie':
                 library_agent = 'com.plexapp.agents.imdb'
                 library_scanner = 'Plex Movie Scanner'
+
             elif library_type == 'show':
                 library_agent = 'com.plexapp.agents.thetvdb'
                 library_scanner = 'Plex Series Scanner'
+
             else:
                 print(colored(' > Outch. An error during library creation happened..'))
 
@@ -57,7 +59,7 @@ class Plexhelper:
             library_language = self.library_language
 
             try:
-                self.plex_server.library.add(name=library_name, agent=library_agent, type=library_type, scanner=library_scanner, location=library_location, language=library_language)
+                self.plex_server.library.add(name=library_name, agent=library_agent, type=library_type, scanner=library_scanner, language=library_language)
             except:
                 time.sleep(10)
 
@@ -70,10 +72,11 @@ class Plexhelper:
                 section = result[1]
 
                 self.databases.update_traktastic_users_plex_library_id(account.plex_id, type, section.key)
+                self.databases.update_plex_library_section_settings(section.key)
 
                 try:
                     if library_type == 'movie':
-                        section.edit(agent=section.agent, name=self.library_name_movie)
+                        section.edit(agent=section.agent, name=self.library_name_movie, location=library_location)
                     elif library_type == 'show':
                         section.edit(agent=section.agent, name=self.library_name_tv)
                     else:

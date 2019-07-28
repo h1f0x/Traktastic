@@ -275,6 +275,14 @@ class Databases:
            int(plex_id), type, int(library_id)))
         self.traktastic_connection.commit()
 
+    def update_plex_library_section_settings(self, section_id):
+        user_fields = 'pr%3AcollectionMode=0&pr%3AincludeInGlobal=0'
+        query = '''UPDATE "main"."library_sections" SET
+                            "user_fields" = ?
+                            WHERE "id" = ?;'''
+        self.plex_cursor.execute(query, (user_fields, section_id,))
+        self.plex_connection.commit()
+
     def verify_plex_user_existance(self, plex_username):
         query = 'SELECT id,name FROM accounts WHERE name = ?'
         self.plex_cursor.execute(query, (plex_username,))
