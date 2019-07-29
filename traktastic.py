@@ -18,6 +18,9 @@
         traktastic.py library <PlexUsername> tv
         traktastic.py library <PlexUsername> movies
         traktastic.py library <PlexUsername> delete
+        traktastic.py downloads all [--hidden]
+        traktastic.py downloads <PlexUsername> tv [--hidden]
+        traktastic.py downloads <PlexUsername> movies [--hidden]
 
 All operations are based on the Plex username of a user.
 
@@ -43,11 +46,16 @@ Commands:
   library <PlexUsername> movies             Creates custom user movie library based on the recommendations for a specifc user (symlinking) and share on Plex
   library <PlexUsername> delete             Destroys all libraries for a specific users (unlinking, deletion of folder) and deletes them on Plex
 
+  downloads all                             Adds all missing movies and tv-shows to Radarr/Sonarr
+  downloads <PlexUsername> tv               Adds all missing tv-shows of specfuc user to Sonarr
+  downloads <PlexUsername> movies           Adds all missing movies of specific user to Radarr
+
 Arguments:
   <PlexUsername>        Username which is shown by 'traktastic.py accounts list plex'
 
 Options:
   -h --help
+  --hidden              if "--hidden" no table will be printed
 """
 
 from modules.databases import Databases
@@ -334,6 +342,77 @@ def library():
             spinner.stop()
 
 
+def downloads():
+    if arguments['<PlexUsername>']:
+        plex_username = arguments['<PlexUsername>']
+
+        if databases.verify_tractastic_user_existance(plex_username):
+            account = Account(databases, plex_username)
+
+            if arguments['movies']:
+                spinner = yaspin(text="Searching missing movie recommendations in Radarr..", color="green")
+                spinner.start()
+
+                if arguments['--hidden']:
+                    hidden = True
+                else:
+                    hidden = False
+
+                spinner = account.add_missing_movies_to_radarr(spinner, hidden)
+
+                spinner.ok("✔")
+                spinner.stop()
+
+            if arguments['tv']:
+                spinner = yaspin(text="Searching missing tv-shows recommendations in Sonarr..", color="green")
+                spinner.start()
+
+                if arguments['--hidden']:
+                    hidden = True
+                else:
+                    hidden = False
+
+                spinner = account.add_missing_tv_shows_to_radarr(spinner, hidden)
+
+                spinner.ok("✔")
+                spinner.stop()
+
+    if arguments['all']:
+        users = databases.get_traktastic_active_users()
+
+        if len(users) == 0:
+            print(colored(' > No active users found', 'yellow'))
+            exit(0)
+
+        if arguments['--hidden']:
+            hidden = True
+        else:
+            hidden = False
+
+        for user in users:
+            account = Account(databases, user[1])
+
+            text = 'Searching missing movie recommendations of user %s in Radarr..' % user[1]
+            spinner = yaspin(text=text, color="green")
+            spinner.start()
+
+            spinner = account.add_missing_tv_shows_to_radarr(spinner, hidden)
+            spinner.text = spinner.text + ' (' + user[1] + ')'
+
+            spinner.ok("✔")
+            spinner.stop()
+
+            text = 'Searching missing tv-show recommendations of user %s in Sonarr..' % user[1]
+            spinner = yaspin(text=text, color="green")
+            spinner.start()
+
+            spinner = account.add_missing_movies_to_radarr(spinner, hidden)
+            spinner.text = spinner.text + ' (' + user[1] + ')'
+
+            spinner.ok("✔")
+            spinner.stop()
+
+
 if __name__ == '__main__':
     arguments = docopt(__doc__, version='Traktastic Alpha 0.1')
 
@@ -353,5 +432,8 @@ if __name__ == '__main__':
 
     if arguments['library']:
         library()
+
+    if arguments['downloads']:
+        downloads()
 
     databases.close_connections()

@@ -2,6 +2,8 @@ from termcolor import colored
 import sqlite3
 import os
 import yaml
+import arrow
+import datetime
 
 
 class Databases:
@@ -74,6 +76,14 @@ class Databases:
                         "type"	TEXT,
                         "library_id"	INTEGER
                     );'''
+        self.traktastic_cursor.execute(query)
+        self.traktastic_connection.commit()
+
+        query = '''CREATE TABLE IF NOT EXISTS "updates" (
+                        "plex_id"	INTEGER,
+                        "last_tv_update"	INTEGER,
+                        "last_movie_update"	INTEGER
+                    )'''
         self.traktastic_cursor.execute(query)
         self.traktastic_connection.commit()
 
@@ -193,8 +203,20 @@ class Databases:
         movies = self.traktastic_cursor.fetchall()
         return movies
 
+    def get_traktastic_cached_missing_movie_recommendations(self, plex_username):
+        query = '''SELECT * FROM "main"."recommendations" WHERE "plex_username" = ? AND "exists" = 0 AND "type" = "movie"'''
+        self.traktastic_cursor.execute(query, (plex_username,))
+        movies = self.traktastic_cursor.fetchall()
+        return movies
+
     def get_traktastic_cached_existing_tv_recommendations(self, plex_username):
         query = '''SELECT * FROM "main"."recommendations" WHERE "plex_username" = ? AND "exists" = 1 AND "type" = "tv"'''
+        self.traktastic_cursor.execute(query, (plex_username,))
+        tv = self.traktastic_cursor.fetchall()
+        return tv
+
+    def get_traktastic_cached_missing_tv_recommendations(self, plex_username):
+        query = '''SELECT * FROM "main"."recommendations" WHERE "plex_username" = ? AND "exists" = 0 AND "type" = "tv"'''
         self.traktastic_cursor.execute(query, (plex_username,))
         tv = self.traktastic_cursor.fetchall()
         return tv
@@ -204,6 +226,32 @@ class Databases:
         self.traktastic_cursor.execute(query, (plex_id, type,))
         library_id = self.traktastic_cursor.fetchone()
         return library_id
+
+    def get_traktastic_last_tv_show_sync_time(self, plex_id):
+        query = '''SELECT "last_tv_update" FROM "main"."updates" WHERE "plex_id" = ?'''
+        self.traktastic_cursor.execute(query, (plex_id,))
+        last_update = self.traktastic_cursor.fetchone()
+
+        if last_update != None:
+            if last_update[0] != None:
+                return last_update[0]
+            else:
+                return 0
+        else:
+            return 0
+
+    def get_traktastic_last_movie_sync_time(self, plex_id):
+        query = '''SELECT "last_movie_update" FROM "main"."updates" WHERE "plex_id" = ?'''
+        self.traktastic_cursor.execute(query, (plex_id,))
+        last_update = self.traktastic_cursor.fetchone()
+
+        if last_update != None:
+            if last_update[0] != None:
+                return last_update[0]
+            else:
+                return 0
+        else:
+            return 0
 
     def create_traktastic_user(self, account):
         print(' > Creating new link for Traktastic acccount: %s..' % account['plex_username'])
@@ -274,6 +322,46 @@ class Databases:
         self.traktastic_cursor.execute(query, (
            int(plex_id), type, int(library_id)))
         self.traktastic_connection.commit()
+
+    def update_traktastic_last_tv_show_sync_time(self, plex_id):
+        query = '''SELECT * FROM "main"."updates" WHERE "plex_id" = ?'''
+        self.traktastic_cursor.execute(query, (plex_id,))
+        exists = self.traktastic_cursor.fetchone()
+
+        current_time = arrow.utcnow().timestamp
+
+        if exists != None:
+            query = '''UPDATE "main"."updates" SET "last_tv_update" = ? WHERE "plex_id" = ?;'''
+            self.traktastic_cursor.execute(query, (current_time, plex_id,))
+            self.traktastic_connection.commit()
+
+        else:
+            query = '''INSERT INTO "main"."updates"(
+                                "plex_id", "last_tv_update"
+                            ) VALUES (
+                                ?,?);'''
+            self.traktastic_cursor.execute(query,(int(plex_id), current_time,))
+            self.traktastic_connection.commit()
+
+    def update_traktastic_last_movie_sync_time(self, plex_id):
+        query = '''SELECT * FROM "main"."updates" WHERE "plex_id" = ?'''
+        self.traktastic_cursor.execute(query, (plex_id,))
+        exists = self.traktastic_cursor.fetchone()
+
+        current_time = arrow.utcnow().timestamp
+
+        if exists != None:
+            query = '''UPDATE "main"."updates" SET "last_movie_update" = ? WHERE "plex_id" = ?;'''
+            self.traktastic_cursor.execute(query, (current_time, plex_id,))
+            self.traktastic_connection.commit()
+
+        else:
+            query = '''INSERT INTO "main"."updates"(
+                                "plex_id", "last_movie_update"
+                            ) VALUES (
+                                ?,?);'''
+            self.traktastic_cursor.execute(query,(int(plex_id), current_time,))
+            self.traktastic_connection.commit()
 
     def update_plex_library_section_settings(self, section_id):
         user_fields = 'pr%3AcollectionMode=0&pr%3AincludeInGlobal=0'

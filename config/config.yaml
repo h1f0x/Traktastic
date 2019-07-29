@@ -11,17 +11,31 @@ trakt:
   movie_max_related_movies: 5
 
 plex:
-  username: <YOUR_PLEX_USERNAME>
-  password: <YOUR_PLEX_PASSWORD>
-  server: <YOUR_PLEX_MEDIA_SERVER_ID>
+  username: '<YOUR_PLEX_USERNAME>'
+  password: '<YOUR_PLEX_PASSWORD>'
+  server: '<YOUR_PLEX_MEDIA_SERVER_ID>'
   library_name_movie: 'Movie Recommendations'
   library_name_tv: 'TV-Show Recommendations'
   library_language: 'en'
   auto_library: False
+
+radarr:
+  host: '<YOUR_RADARR_HOST:PORT>'
+  api_key: <API_KEY>
+  auto_download: "false"
+  profileId: 1
+  download_path: '<PATH_TO_DOWNLOAD_DIR>'
+
+sonarr:
+  host: '<YOUR_SONARR_HOST:PORT>'
+  api_key: <API_KEY>
+  auto_download: "false"
+  profileId: 1
+  download_path: '<PATH_TO_DOWNLOAD_DIR>'
 
 filesystem:
   libraries_base_path: './libraries/'
 
 databases:
   traktastic_database_path: './databases/traktastic.db'
-  plex_database_path: '/path/to/plex/database.db'
+  plex_database_path: '/<PATH_TO_PLEX_DB>'

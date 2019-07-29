@@ -9,10 +9,10 @@ Features of Traktastic:
 - Configure filters for the desired recommendations, while TV series or films that do not meet the criteria are automatically dismissed and new ones are loaded
 - Based on the recommendations, create new Plex Libraries for the respective users, whereby existing content is linked to a user-specific directory by means of symlinking in order to save space
 - Create and share the libraries directly on your Plex Server and share them with the corresponding user automatically
+- Integrated Sonarr/Radarr API for adding missing content
 
 In development:
 - Cronjob Administration
-- Sonarr/Radarr API
 
 
 ## Getting Started
@@ -56,20 +56,34 @@ trakt:
   movie_max_related_movies: 5
 
 plex:
-  username: <YOUR_PLEX_USERNAME>
-  password: <YOUR_PLEX_PASSWORD>
-  server: <YOUR_PLEX_MEDIA_SERVER_ID>
+  username: '<YOUR_PLEX_USERNAME>'
+  password: '<YOUR_PLEX_PASSWORD>'
+  server: '<YOUR_PLEX_MEDIA_SERVER_ID>'
   library_name_movie: 'Movie Recommendations'
   library_name_tv: 'TV-Show Recommendations'
   library_language: 'en'
   auto_library: False
+  
+radarr:
+  host: '<YOUR_RADARR_HOST:PORT>'
+  api_key: <API_KEY>
+  auto_download: "false"
+  profileId: 1
+  download_path: '<PATH_TO_DOWNLOAD_DIR>'
+
+sonarr:
+  host: '<YOUR_SONARR_HOST:PORT>'
+  api_key: <API_KEY>
+  auto_download: "false"
+  profileId: 1
+  download_path: '<PATH_TO_DOWNLOAD_DIR>'
 
 filesystem:
   libraries_base_path: './libraries/'
 
 databases:
   traktastic_database_path: './databases/traktastic.db'
-  plex_database_path: '/path/to/plex/database.db'
+  plex_database_path: '<PATH_TO_PLEX_DB>'
 ```
 
 > NOTE: If you want to auto-generate Plex Libraries for users, you need to set the ``auto_library`` flag to ```True``` and enter your Plex Server credentials (```username```, ```password```) and your server id (```server```)! The library command section will now push the libraries to your Plex server and shares them with the correct user only!
@@ -104,6 +118,9 @@ Usage:  traktastic.py accounts list [plex]
         traktastic.py library <PlexUsername> tv
         traktastic.py library <PlexUsername> movies
         traktastic.py library <PlexUsername> delete
+        traktastic.py downloads all [--hidden]
+        traktastic.py downloads <PlexUsername> tv [--hidden]
+        traktastic.py downloads <PlexUsername> movies [--hidden]
 
 All operations are based on the Plex username of a user.
 
@@ -128,7 +145,11 @@ Commands:
   library <PlexUsername> tv                 Creates custom user tv-show library based on the recommendations for a specifc user (symlinking) and share on Plex
   library <PlexUsername> movies             Creates custom user movie library based on the recommendations for a specifc user (symlinking) and share on Plex
   library <PlexUsername> delete             Destroys all libraries for a specific users (unlinking, deletion of folder) and deletes them on Plex
-
+  
+  downloads all                             Adds all missing movies and tv-shows to Radarr/Sonarr
+  downloads <PlexUsername> tv               Adds all missing tv-shows of specfuc user to Sonarr
+  downloads <PlexUsername> movies           Adds all missing movies of specific user to Radarr
+  
 Arguments:
   <PlexUsername>        Username which is shown by 'traktastic.py accounts list plex'
 
