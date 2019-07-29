@@ -83,7 +83,7 @@ filesystem:
 
 databases:
   traktastic_database_path: './databases/traktastic.db'
-  plex_database_path: '<PATH_TO_PLEX_DB>'
+  plex_database_path: './<PATH_TO_PLEX_DB>'
 ```
 
 > NOTE: If you want to auto-generate Plex Libraries for users, you need to set the ``auto_library`` flag to ```True``` and enter your Plex Server credentials (```username```, ```password```) and your server id (```server```)! The library command section will now push the libraries to your Plex server and shares them with the correct user only!

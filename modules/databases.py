@@ -54,8 +54,7 @@ class Databases:
                         "trakt_client_secret"	TEXT,
                         "directory_tv"	TEXT,
                         "directory_movie"	TEXT,
-                        "active"	INTEGER,
-                        "last_run"	INTEGER
+                        "active"	INTEGER
                     );'''
         self.traktastic_cursor.execute(query)
         self.traktastic_connection.commit()

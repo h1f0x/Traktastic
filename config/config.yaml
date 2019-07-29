@@ -38,4 +38,4 @@ filesystem:
 
 databases:
   traktastic_database_path: './databases/traktastic.db'
-  plex_database_path: '/<PATH_TO_PLEX_DB>'
+  plex_database_path: './<PATH_TO_PLEX_DB>'

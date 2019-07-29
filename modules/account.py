@@ -251,15 +251,16 @@ class Account:
         final_recommendations = []
 
         for show in overwall_recommendations:
-            if show.title not in duplicated_recommendations:
-                show.type = 'tv'
-                show.plex = self.databases.verify_plex_item_availablity(show.ids['ids']['tvdb'])
+            if show.votes != 0 and show.rating != 0.0:
+                if show.title not in duplicated_recommendations:
+                    show.type = 'tv'
+                    show.plex = self.databases.verify_plex_item_availablity(show.ids['ids']['tvdb'])
 
-                if show.plex == True:
-                    show.location = self.databases.get_plex_tv_show_base_path(show.ids['ids']['tvdb'])
+                    if show.plex == True:
+                        show.location = self.databases.get_plex_tv_show_base_path(show.ids['ids']['tvdb'])
 
-                final_recommendations.append(show)
-                duplicated_recommendations.add(show.title)
+                    final_recommendations.append(show)
+                    duplicated_recommendations.add(show.title)
 
         self.databases.update_traktastic_user_recommendations(self.plex_username, final_recommendations, 'tv')
 
