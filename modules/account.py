@@ -251,7 +251,7 @@ class Account:
         final_recommendations = []
 
         for show in overwall_recommendations:
-            if show.votes != 0 and show.rating != 0.0:
+            if show.ratings['votes'] != 0 and show.ratings['rating'] != 0.0:
                 if show.title not in duplicated_recommendations:
                     show.type = 'tv'
                     show.plex = self.databases.verify_plex_item_availablity(show.ids['ids']['tvdb'])
@@ -327,15 +327,16 @@ class Account:
         final_recommendations = []
 
         for movie in overwall_recommendations:
-            if movie.title not in duplicated_recommendations:
-                movie.type = 'movie'
-                movie.plex = self.databases.verify_plex_item_availablity(movie.ids['ids']['imdb'])
+            if movie.ratings['votes'] != 0 and movie.ratings['rating'] != 0.0:
+                if movie.title not in duplicated_recommendations:
+                    movie.type = 'movie'
+                    movie.plex = self.databases.verify_plex_item_availablity(movie.ids['ids']['imdb'])
 
-                if movie.plex == True:
-                    movie.location = self.databases.get_plex_movie_base_path(movie.ids['ids']['imdb'])
+                    if movie.plex == True:
+                        movie.location = self.databases.get_plex_movie_base_path(movie.ids['ids']['imdb'])
 
-                final_recommendations.append(movie)
-                duplicated_recommendations.add(movie.title)
+                    final_recommendations.append(movie)
+                    duplicated_recommendations.add(movie.title)
 
         self.databases.update_traktastic_user_recommendations(self.plex_username, final_recommendations, 'movie')
 
