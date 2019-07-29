@@ -450,7 +450,7 @@ class Account:
             tmp['imdbId'] = movie[4]
             tmp['status'] = ''
             tmp['added'] = ''
-            tmp['download'] = False
+            tmp['download'] = True
 
             if lookup != None:
                 tmp['status'] = colored('✔', 'green')
